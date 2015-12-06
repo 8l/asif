@@ -1,0 +1,10 @@
+%load "Prelude";
+%load "Repr";
+%load "NF";
+
+-- unquote defined using foldExp is not a normal form.
+
+\f : Bool -> Bool -> Bool.
+f false
+  (nf [Pi A:U. Exp A -> unU A] [unquote])
+      

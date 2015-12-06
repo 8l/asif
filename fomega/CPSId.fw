@@ -1,0 +1,5 @@
+%load "CPS";
+
+\B:* -> * -> *.
+B (CPS [Pi A:*. A -> A])
+  (Ct (Pi A:*. Ct (Ct A -> Ct A)))

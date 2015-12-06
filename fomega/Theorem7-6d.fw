@@ -1,0 +1,9 @@
+%load "Prelude";
+%load "Repr";
+%load "IsAbs";
+
+\b : Bool -> Bool -> Bool.
+b false
+  (isAbs
+    [(Pi A:*. A) -> Pi A:*. A]
+    [(\A:*. \x:A. x) (Pi A:*. A)])

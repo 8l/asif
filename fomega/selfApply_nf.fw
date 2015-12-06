@@ -1,0 +1,8 @@
+%load "Repr";
+%load "NF";
+
+-- nf is not a normal form, since it is defined as an application
+-- to foldExp.
+
+\f : Bool -> Bool -> Bool.
+f false (nf [Pi A:U. Exp A -> Bool] [nf])

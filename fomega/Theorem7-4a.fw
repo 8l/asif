@@ -1,0 +1,9 @@
+%load "Prelude";
+%load "Repr";
+
+%decl t : * = Pi A:*. A -> A;
+
+\b : t -> t -> t.
+b (\A:*. \x:A. x)
+  (unquote [Pi A:*. A -> A] [\A:*. \x:A. x])
+  

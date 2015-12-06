@@ -1,0 +1,7 @@
+%load "Repr";
+%load "NF";
+
+\B:* -> * -> *.
+B Bools
+  (Op KBools [Pi F:* -> *. F (Pi A:*. A -> A)])
+  

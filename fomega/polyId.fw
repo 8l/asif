@@ -1,0 +1,54 @@
+%load "Repr";
+
+%decl PolyIdT : U =
+  \k : * -> *.
+  Pi A:*. k (
+  k A -> k A
+  )
+;
+
+%decl polyId : Exp PolyIdT =
+  \k : * -> *.
+  \ abs  : Abs k.  \ app  : App k.
+  \ tabs : TAbs k. \ tapp : TApp k.
+
+  tabs 
+    (Pi A:*. k (k A -> k A)) 
+    (\ A : *.
+     \ f : (Pi B:*. k B -> A).
+     \ e : (Pi A:*. k (k A -> k A)).
+     f (k (Pi T:*. T) -> k (Pi T:*. T)) (e (Pi T:*. T)))
+  (
+  \A:*.
+  abs A A (
+  \x : k A. x
+  ))
+;
+
+%decl T1 : * -> U =
+  \B:*.
+  \k : * -> *.
+  k (k B -> k B) ->
+  k (k B -> k B)
+;
+
+%decl inst : (Pi B:*. Exp (T1 B)) =
+  \B : *.
+  \k : * -> *.
+  \ abs  : Abs k.  \ app  : App k.
+  \ tabs : TAbs k. \ tapp : TApp k.
+
+  tapp 
+    (Pi A:*. k (k A -> k A))
+    (tabs 
+       (Pi A:*. k (k A -> k A))
+       (\ A : *.
+        \ f : (Pi B:*. k B -> A).
+        \ e : (Pi A:*. k (k A -> k A)).
+        f (k (Pi T:*. T) -> k (Pi T:*. T)) (e (Pi T:*. T)))
+    (\A:*. abs A A (\x : k A. x)))
+    (k (k B -> k B) -> k (k B -> k B))
+    (\e : (Pi A:*. k (k A -> k A)). e (k B -> k B))
+;
+
+polyId

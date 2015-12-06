@@ -1,0 +1,17 @@
+%decl t1 : * = Pi A:*. A;
+%decl r1 : (* -> *) -> * = [t1];
+
+%decl t2 : * = t1 -> t1 -> t1;
+%decl r2 : (* -> *) -> * = [t2];
+
+%decl t3 : * -> * = \A:*. A;
+%decl r3 : (* -> *) -> * -> * = [t3];
+
+%decl t4 : (* -> *) -> * = \F : * -> *. F t1;
+%decl r4 : (* -> *) -> (* -> *) -> * = [t4];
+
+%decl t5 : * = t3 t2;
+%decl r5 : (* -> *) -> * = [t5];
+
+-- A program needs to end with a term 
+\A:*. \x:A. x

@@ -1,0 +1,21 @@
+%decl Nat  : *   = Pi A:*. A -> (A -> A) -> A;
+%decl zero : Nat = \A:*. \z:A. \s:A -> A. z;
+%decl succ : Nat -> Nat = \n:Nat. \A:*. \z:A. \s:A -> A. s (n A z s);
+%decl plus : Nat -> Nat -> Nat =
+  \m:Nat. \n:Nat. m Nat n succ;
+
+%decl Bool  : *    = Pi A:*. A -> A -> A;
+%decl true  : Bool = \A:*. \t:A. \f:A. t;
+%decl false : Bool = \A:*. \t:A. \f:A. f;
+%decl and   : Bool -> Bool -> Bool =
+  \b1:Bool. \b2:Bool. \A:*. \t:A. \f:A.
+  b1 A (b2 A t f) f
+;
+
+%decl Bools : *    = Pi A:*. (Bool -> Bool -> A) -> A;
+%decl bools : Bool -> Bool -> Bools 
+            = \b1:Bool. \b2:Bool. \A:*. \f:Bool -> Bool -> A. f b1 b2;
+%decl fst : Bools -> Bool = 
+  \bs:Bools. bs Bool (\b1:Bool. \b2:Bool. b1);
+%decl snd : Bools -> Bool = 
+  \bs:Bools. bs Bool (\b1:Bool. \b2:Bool. b2);

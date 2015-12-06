@@ -1,0 +1,8 @@
+%load "Repr";
+%load "NF";
+%load "CPS";
+
+\B:* -> * -> *.
+B Bools
+  (Op KBools [Pi A:U. Exp A -> CPS A])
+  

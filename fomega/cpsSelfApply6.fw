@@ -1,0 +1,25 @@
+%load "CPS";
+
+%decl Id2Id : U =
+  [(Pi a:*. a -> a) -> (Pi a:*. a -> a)];
+  
+%decl selfApplyId : Exp Id2Id =
+  [\x:(Pi a:*. a -> a). x (Pi a:*. a -> a) x];
+
+-- STEP 6: Simplify types
+
+%decl expected : CPS Id2Id =
+  \V1 : *.
+  \k1 : (Ct (Pi a:*. Ct (Ct a -> Ct a)) ->
+         Ct (Pi a:*. Ct (Ct a -> Ct a))) -> V1.
+  k1 (\x : Ct (Pi a:*. Ct (Ct a -> Ct a)).
+      \V2 : *.
+      \k2 : (Pi a:*. Ct (Ct a -> Ct a)) -> V2.
+      (x V2 (\e : Pi a:*. Ct (Ct a -> Ct a).
+             e (Pi a:*. Ct (Ct a -> Ct a)) V2
+               (\g : Ct (Pi a:*. Ct (Ct a -> Ct a)) ->
+		     Ct (Pi a:*. Ct (Ct a -> Ct a)).
+                g x V2 k2))));
+
+\f : CPS Id2Id -> CPS Id2Id -> CPS Id2Id.
+f (cps Id2Id selfApplyId) expected

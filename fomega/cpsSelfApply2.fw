@@ -1,0 +1,22 @@
+%load "CPS";
+
+%decl Id2Id : U =
+  [(Pi a:*. a -> a) -> (Pi a:*. a -> a)];
+  
+%decl selfApplyId : Exp Id2Id =
+  [\x:(Pi a:*. a -> a). x (Pi a:*. a -> a) x];
+
+-- STEP 2: inline cpsAbs
+
+%decl expected : CPS Id2Id =
+  \V1 : *.
+  \k1 : (CPS [Pi a:*. a -> a] -> CPS [Pi a:*. a -> a]) -> V1.
+  k1 (\x : CPS [Pi a:*. a -> a].
+      cpsApp (CPS1 [Pi a:*. a -> a]) (CPS1 [Pi a:*. a -> a])
+	(cpsTApp (CPS1 [Pi a:*. a -> a]) x
+	  (CPS1 [(Pi a:*. a -> a) -> (Pi a:*. a -> a)])
+	  (\y : CPS1 [Pi a:*. a -> a]. y (CPS1 [Pi a:*. a -> a])))
+	x);
+
+\f : CPS Id2Id -> CPS Id2Id -> CPS Id2Id.
+f (cps Id2Id selfApplyId) expected

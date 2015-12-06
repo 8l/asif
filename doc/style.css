@@ -1,0 +1,105 @@
+body {
+  padding: 20px;
+}
+
+#content {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#content, #right-content {
+  width: 650px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+#postamble {
+  display: none;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1.25em;
+  margin-top: 1em;
+}
+
+h3 {
+  font-size: 1em;
+  margin-top: 1em;
+}
+
+ul {
+  padding-left: 1.5em;
+  margin-bottom: 10px;
+}
+
+li p {
+  margin-top: 0.5em;
+}
+
+table {
+  margin: 1em 0 1.5em 0;
+}
+
+code {
+    font-size: 14px;
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+pre, pre.src {
+  font-size: 12px;
+  margin-left: 0;
+  box-shadow: 0 0 0 black;
+  padding: 5px;
+  max-height: 400px;
+  overflow-y: scroll;
+  padding: 1em 0 1em 1em;
+
+}
+
+#text-2 pre {
+  margin-top: 8px;
+}
+
+.section-number-2,
+.section-number-3,
+.section-number-4 {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,.5);
+}
+
+.syntax-table {
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 10px 2px;
+    width: 60%;
+}
+
+
+.syntax-table td {
+    padding: 1px;
+    text-align: center;
+}
+
+.representation-table {
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 10px 2px;
+    width: 80%;
+}
+.representation-table td {
+    padding: 6px;
+    text-align: center;
+}

@@ -1,0 +1,4 @@
+%load "Repr";
+\b : U -> U -> U.
+b [Pi A:*. A -> A]
+  (\F:* -> *. Pi A:*. F (F A -> F A))

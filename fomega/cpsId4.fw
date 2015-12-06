@@ -1,0 +1,16 @@
+%load "CPS";
+
+%decl Id : U = [Pi A:*. A -> A];
+%decl id : Exp Id = [\A:*. \x:A. x];
+
+-- STEP 4: Simplify types
+
+%decl expected : CPS Id =
+  \V1 : *.
+  \k1 : (Pi A:*. Ct (Ct A -> Ct A)) -> V1.
+  k1 (\A  : *. \V2 : *.
+      \k2 : (Ct A -> Ct A) -> V2.
+      k2 (\x: Ct A. x));
+
+\f : CPS Id -> CPS Id -> CPS Id.
+f (cps Id id) expected

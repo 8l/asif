@@ -1,0 +1,13 @@
+%load "Prelude";
+%load "Repr";
+
+%decl id : (Pi A:*. A -> A)     = \A:*. \x:A. x;
+%decl _  : Exp [Pi A:*. A -> A] = [id];
+
+%decl one : Nat = succ zero;
+%decl _   : Exp [Nat] = [one];
+
+%decl _ : Exp [Pi A:U. Exp A -> unU A] = [unquote];
+
+-- A program needs to end with a term 
+\A:*. \x:A. x

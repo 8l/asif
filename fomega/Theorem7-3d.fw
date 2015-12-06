@@ -1,0 +1,7 @@
+%load "Repr";
+%load "CPS";
+
+\B:* -> * -> *.
+B (Pi A:U. Exp A -> CPS A)
+  (Op Id [Pi A:U. Exp A -> CPS A])
+  

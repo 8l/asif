@@ -1,0 +1,21 @@
+%load "Repr";
+
+%decl t : * = Exp [Pi A:*. A -> A];
+
+\b : t -> t -> t.
+b [\A:*. \x:A. x]
+  (\F:* -> *.
+   \abs  : Abs F.  \app  : App F.
+   \tabs : TAbs F. \tapp : TApp F.
+   tabs
+     -- This gives us a prequotation, i.e. [[ Pi A:*. A -> A ]]
+     ([Pi A:*. A -> A] F)
+
+     -- strip
+     (\A:*. \f : (Pi B:*. F B -> A).
+      \x: ([Pi A:*. A -> A] F).
+      f (F (Pi A:*. A) -> F (Pi A:*. A)) (x (Pi A:*. A)))
+
+     (\A:*.
+      abs A A (\x : F A. x)))
+      

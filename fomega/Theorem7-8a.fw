@@ -1,0 +1,9 @@
+%load "Prelude";
+%load "Repr";
+%load "Size";
+
+\f : Nat -> Nat -> Nat.
+f (succ (succ zero))
+  (size
+    [(Pi A:*. A) -> (Pi A:*. A)]
+    [\x:(Pi A:*. A). x])	

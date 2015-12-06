@@ -1,0 +1,6 @@
+%load "Prelude";
+
+\b : Nat -> Nat -> Nat.
+b (succ (succ zero))
+  (plus (succ zero) (succ zero))
+      

@@ -1,0 +1,27 @@
+%load "CPS";
+
+%decl Id : U = [Pi A:*. A -> A];
+%decl id : Exp Id = [\A:*. \x:A. x];
+
+-- STEP 1: express (cps Id id) using
+--         cps' fold functions cpsAbs and
+--         cpsTAbs         
+
+-- Kind inhabitant for *
+%decl bot : * = Pi A:*. A;
+
+-- Strip function for the type abstraction.
+%decl strip : Strip Ct (CPS1 [Pi A:*. A -> A]) =
+  \A:*.
+  \f : (Pi B:*. Ct B -> A).
+  \x : (CPS1 [Pi A:*. A -> A]).
+  f (Ct bot -> Ct bot) (x bot);
+
+%decl expected : CPS Id =
+  cpsTAbs (CPS1 [Pi A:*. A -> A]) strip
+    (\A:*.
+     cpsAbs (CPS1 [A]) (CPS1 [A])
+       (\x: CPS [A]. x));
+
+\f : CPS Id -> CPS Id -> CPS Id.
+f (cps Id id) expected

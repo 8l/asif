@@ -1,0 +1,26 @@
+%load "Repr";
+
+%decl t : * = Exp [(Pi A:*. A -> A) -> (Pi A:*. A -> A)];
+
+\b : t -> t -> t.
+b [\x:(Pi A:*. A -> A). x (Pi A:*. A -> A) x]
+  (\F:* -> *.
+   \abs  : Abs F.  \app  : App F.
+   \tabs : TAbs F. \tapp : TApp F.
+   abs ([Pi A:*. A -> A] F) ([Pi A:*. A -> A] F)
+     (\x : F ([Pi A:*. A -> A] F).
+      app ([Pi A:*. A -> A] F) ([Pi A:*. A -> A] F)
+        (tapp
+	  -- quantified type
+	  ([Pi A:*. A -> A] F)
+
+          -- term representation
+          x
+
+	  -- instantiation type
+	  ([(Pi A:*. A -> A) -> (Pi A:*. A -> A)] F)
+
+          -- instantiation function
+	  (\y : ([Pi A:*. A -> A] F). y ([Pi A:*. A -> A] F)))
+	x))
+      

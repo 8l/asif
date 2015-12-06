@@ -1,0 +1,10 @@
+%load "Prelude";
+%load "Repr";
+%load "NF";
+
+\f : Bool -> Bool -> Bool.
+f false
+  (nf
+    [(Pi A:*. A -> A) -> (Pi A:*. A -> A)]
+    [(\A:*. \x:A. x) (Pi A:*. A -> A)])
+      

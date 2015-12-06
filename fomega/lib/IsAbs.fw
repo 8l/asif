@@ -1,0 +1,23 @@
+%load "Repr";
+%load "Prelude";
+
+%decl KBool   : KF   = \A:*. Bool;
+
+%decl isAbsAbs : Abs KBool =
+  \A:*. \B:*. \f:Bool -> Bool. true;
+
+%decl isAbsApp : App KBool =
+  \A:*. \B:*. \f:Bool. \x:Bool. false;
+
+%decl isAbsTAbs : TAbs KBool =
+  \A:*. \_:Strip KBool A. \f : A. true;
+
+%decl isAbsTApp : TApp KBool =
+  \A:*. \f : Bool.
+  \B:*. \inst:(A -> Bool). false
+;
+
+%decl isAbs : (Pi A:U. Exp A -> Bool) =
+  foldExp KBool isAbsAbs isAbsApp isAbsTAbs isAbsTApp
+;
+

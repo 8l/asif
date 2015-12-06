@@ -1,0 +1,7 @@
+%load "Repr";
+%load "IsAbs";
+
+-- isAbs is defined as an application to foldExp; so it is not an abstraction
+
+\f : Bool -> Bool -> Bool.
+f false (isAbs [Pi A:U. Exp A -> Bool] [isAbs])

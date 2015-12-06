@@ -1,0 +1,25 @@
+%load "Repr";
+%load "Prelude";
+
+%decl KNat   : KF   = \A:*. Nat;
+
+%decl sizeAbs : Abs KNat =
+  \A:*. \B:*. \f:Nat -> Nat. succ (f (succ zero));
+
+%decl sizeApp : App KNat =
+  \A:*. \B:*. \f:Nat. \x:Nat. succ (plus f x);
+
+%decl sizeTAbs : TAbs KNat =
+  \A:*. \strip:Strip KNat A. \f : A. 
+  succ (strip Nat (\A:*. \x:Nat. x) f)
+;
+
+%decl sizeTApp : TApp KNat =
+  \A:*. \f : Nat.
+  \B:*. \inst:A -> Nat. 
+  succ f
+;
+
+%decl size : (Pi A:U. Exp A -> Nat) =
+  foldExp KNat sizeAbs sizeApp sizeTAbs sizeTApp
+;

@@ -1,0 +1,3 @@
+%decl Id : *  = Pi A:*. A -> A;
+%decl id : Id = \A:*. \x:A. x;
+

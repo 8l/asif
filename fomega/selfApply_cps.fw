@@ -1,0 +1,6 @@
+%load "Repr";
+%load "CPS";
+
+%decl r : CPS [Pi A:U. Exp A -> CPS A] = cps [Pi A:U. Exp A -> CPS A] [cps];
+
+r

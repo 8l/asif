@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Breaking Through the Normalization Barrier: A Self-Interpreter for F-omega</title>
+<!-- 2015-10-11 Sun 12:49 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Matt Brown" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/readable/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Breaking Through the Normalization Barrier: A Self-Interpreter for F-omega</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Step 1: Installation</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Requirements</a></li>
+<li><a href="#sec-2-2">2.2. Get the sources</a></li>
+<li><a href="#sec-2-3">2.3. Build the F-omega implementation</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Step 2: Evaluation</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Description of concrete syntax</a></li>
+<li><a href="#sec-3-2">3.2. The Test Types</a></li>
+<li><a href="#sec-3-3">3.3. The Tests</a>
+<ul>
+<li><a href="#sec-3-3-1">3.3.1. Section 5</a></li>
+<li><a href="#sec-3-3-2">3.3.2. Section 6</a></li>
+<li><a href="#sec-3-3-3">3.3.3. Section 7</a></li>
+<li><a href="#sec-3-3-4">3.3.4. Section 8</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The main result of the paper is that System F-omega supports typed
+self-representation with several operations, including a
+self-interpreter. The purpose of the artifact is to provide tools that
+help build, type check, and experiment with representations and their
+operations. The artifact includes:
+</p>
+
+<ul class="org-ul">
+<li>A parser for our concrete syntax of System F-omega, which includes
+syntactic sugar for defining abbreviations, loading definitions
+from other files, and building representations of terms and types.
+</li>
+<li>An implementation of System F-omega, including a type checker, term
+and type quoters, an evaluator, and a beta-equivalence checker.
+</li>
+<li>Source code in our concrete syntax for all the operations described
+in the paper.
+</li>
+<li>A suite a System F-omega test files.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Step 1: Installation</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Requirements</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The tests should be run on a modern Unix-like system (e.g. Linux or
+Mac OS X) with at least 4 Gigabytes of RAM. We assume that the <a href="https://www.haskell.org/platform/">Haskell
+Platform</a> has been installed and <code>ghc</code> and <code>cabal</code> are in <code>$PATH</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Get the sources</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li>Download from <a href="http://compilers.cs.ucla.edu/popl16/popl16-artifact.zip"><a href="http://compilers.cs.ucla.edu/popl16/popl16-artifact.zip">http://compilers.cs.ucla.edu/popl16/popl16-artifact.zip</a></a>
+</li>
+<li>Run the commands:
+<pre class="example">
+$ unzip popl16-artifact.zip
+$ cd popl16-artifact/
+</pre>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Build the F-omega implementation</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+The implementation of F-omega is written in Haskell, and uses the
+cabal package manager. The following command will download and compile
+all the Haskell dependencies, and build and test the F-Omega
+implementation.
+</p>
+<pre class="example">
+$ bin/build.sh
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Step 2: Evaluation</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Description of concrete syntax</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Our concrete syntax is based on the formulation of System F-omega as a
+Pure Type System (PTS). In the paper, we use \(\Lambda\) for abstraction
+over types in terms, while PTS notation uses \(\lambda\) for all
+abstractions. Also, the paper uses \(\forall\) for universal
+quantification and PTS uses \(\Pi\).  Our concrete syntax uses a
+backslash <code>\</code> for all lambda abstractions, and <code>Pi</code> for universal
+quantification.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="syntax-table">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Syntax in Paper</th>
+<th scope="col" class="left">Syntax in Artifact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">\(\forall \alpha:*. \alpha \to \alpha\)</td>
+<td class="left"><code>Pi A:*. A -&gt; A</code></td>
+</tr>
+
+<tr>
+<td class="left">\(\Lambda \alpha:*. \lambda x:\alpha. x\)</td>
+<td class="left"><code>\A:*. \x:A. x</code></td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+Our parser supports the declaration of abbreviations via the <code>%decl</code>
+directive. For example, the following example (taken from
+<code>fomega/lib/Id.fw</code>) declares <code>id</code> to be the polymorphic application
+function, and <code>Id</code> to be its type.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-code">%decl Id : *  = Pi A:*. A -&gt; A;
+%decl id : Id = \A:*. \x:A. x;
+</pre>
+</div>
+
+<p>
+We can load all the declarations from a file in <code>fomega/lib/</code> with the
+<code>%load</code> directive. For example, the following example (taken from
+<code>fomega/id.fw</code>) loads the above declarations from <code>fomega/lib/Id.fw</code>
+and then applies <code>id</code> to itself.
+</p>
+
+<pre class="example">
+%load "Id";
+id Id id
+</pre>
+
+<p>
+Note that <code>fomega/id.fw</code> ends with a term, while <code>fomega/lib/Id.fw</code>
+does not. The files in <code>fomega/lib</code> are called <i>libraries</i> and consist
+of zero or more <code>%load</code> and <code>%decl</code> statements. The files in <code>fomega/</code>
+are called <i>programs</i> and consist of zero or more <code>%load</code> and <code>%decl</code>
+statements followed by a term to be evaluated.
+</p>
+
+<p>
+Another important difference between the artifact and the paper is the
+notation for representations of terms and types. The paper uses an
+overline notation \(\overline{\cdot}\) to denote the representations of
+terms and types, while the artifact uses \([\cdot]\). The artifact
+does not have syntax for pre-representations of terms or types.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="representation-table">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left">Syntax in Paper</th>
+<th scope="col" class="left">Syntax in Artifact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">Representation of a type</td>
+<td class="left">\(\overline{\forall \alpha:*. \alpha \to \alpha}\)</td>
+<td class="left"><code>[Pi A:*. A -&gt; A]</code></td>
+</tr>
+
+<tr>
+<td class="left">Representation of a term</td>
+<td class="left">\(\overline{\Lambda \alpha:*. \lambda x:\alpha. x}\)</td>
+<td class="left"><code>[\A:*. \x:A. x]</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> The Test Types</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+This artifact includes three types of test. Each type of test is to be
+run by the corresponding <i>test runner</i>. The types are:
+</p>
+<ul class="org-ul">
+<li>Typecheck tests, which check if a program typechecks
+successfully. These tests are run with the
+<code>bin/runTypecheckTest.sh</code> test runner. Examples:
+<pre class="example">
+$ bin/runTypecheckTest.sh fomega/typecheckTestSuccess.fw
+Succeeded.
+$ bin/runTypecheckTest.sh fomega/typecheckTestFailure.fw
+runTypecheckTest: unexpected app type: 
+l = Var (Der (Var (Der (Star (Der (Box TypeOfBox)))) "A")) "x"
+ty l = Var (Der (Star (Der (Box TypeOfBox)))) "A"
+</pre>
+
+<p>
+The second example attempts to typecheck the term <code>\A:*. \x:A. x
+   x</code>, which fails. This demonstrates that the test runner does in
+fact detect and report type errors (i.e. it doesn't simply output
+"Succeeded."  for all inputs). It also demonstrates that our type
+errors are not user-friendly. In this artifact, we will not use the
+error messages. We use typecheck tests only to determine whether a
+program type checks.
+</p>
+</li>
+
+<li>An equivalence test, which checks if two terms or types are
+\(\beta\)-equivalent. The program should be a <i>church pair</i> or terms
+or types. The runner extracts each component, normalizes them, and
+tests that the normal forms are \(\alpha\)-equivalent. These tests
+are run with the <code>bin/runEquivTest.sh</code> test runner.
+
+<pre class="example">
+$ bin/runEquivTest.sh fomega/equivTestSuccess.fw
+Succeeded.
+$ bin/runEquivTest.sh fomega/equivTestFailure.fw
+Failed.
+Not alpha-equivalent: 
+   Lam () "3593" (Star ()) (...
+   Lam () "3608" (Star ()) (...
+</pre>
+
+<p>
+Again, the second test demonstrates that our equivalence test
+runner does catch and report failures when the two terms are not
+equivalent. In this case, it fails because the church encoding of
+<code>0</code> is not equivalent to the church encoding of <code>1</code>. Again, we will
+not use these error messages.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> The Tests</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+We now describe the various test files included in the artifact, and
+relate them to the results in the paper. You can run each test
+individually, or run them all via the command:
+</p>
+<pre class="example">
+$ bin/runAllTests.sh
+</pre>
+</div>
+
+<div id="outline-container-sec-3-3-1" class="outline-4">
+<h4 id="sec-3-3-1"><span class="section-number-4">3.3.1</span> Section 5</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+In Section 5 we discuss our representation of types, and show two
+example representations. The following tests check each example, by
+comparing a representation of a type built by our quoter with one
+built by hand. 
+</p>
+<pre class="example">
+$ bin/runEquivTest.sh fomega/reprIdType1.fw
+$ bin/runEquivTest.sh fomega/reprIdType2.fw
+</pre>
+
+<p>
+<b>Theorem 5.1</b> states: if a type has kind \(\kappa\), then its
+representation has type \(\kappa \to *\). The file
+<code>fomega/Theorem5-1.fw</code> contains a number of examples:
+</p>
+<pre class="example">
+$ bin/runTypecheckTest.sh fomega/Theorem5-1.fw
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3-2" class="outline-4">
+<h4 id="sec-3-3-2"><span class="section-number-4">3.3.2</span> Section 6</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<p>
+In Section 6 we discuss our representation of terms, and give two
+examples. The following tests check each example, by
+comparing a representation of a type built by our quoter with one
+built by hand. 
+</p>
+<pre class="example">
+$ bin/runEquivTest.sh fomega/reprId.fw
+$ bin/runEquivTest.sh fomega/reprSelfApply.fw
+</pre>
+
+<p>
+<b>Theorem 6.1</b> states: a term of type \(\tau\) has a representation of
+type \(\tt{Exp}\ \tau\). The file <code>fomega/Theorem6-1.fw</code> contains a
+number of examples:
+</p>
+<pre class="example">
+$ bin/runTypecheckTest.sh fomega/Theorem6-1.fw
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3-3" class="outline-4">
+<h4 id="sec-3-3-3"><span class="section-number-4">3.3.3</span> Section 7</h4>
+<div class="outline-text-4" id="text-3-3-3">
+<p>
+In Section 7 we discuss our operations, and state several correctness
+theorems. The appendix includes detail proofs of each theorem. The
+following tests provide some examples.
+</p>
+<ul class="org-ul">
+<li><b>Theorem 7.3</b>: Correctness of <code>Id</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-3a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-3b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-3c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-3d.fw
+</pre>
+</li>
+<li><b>Theorem 7.4</b>: Correctness of <code>unquote</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-4a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-4b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-4c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-4d.fw
+</pre>
+</li>
+<li><b>Theorem 7.5</b>: Correctness of <code>KBool</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-5a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-5b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-5c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-5d.fw
+</pre>
+</li>
+<li><b>Theorem 7.6</b>: Correctness of <code>isAbs</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-6a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-6b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-6c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-6d.fw
+</pre>
+</li>
+<li><b>Theorem 7.7</b>: Correctness of <code>KNat</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-7a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-7b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-7c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-7d.fw
+</pre>
+</li>
+<li><b>Theorem 7.8</b>: Correctness of <code>size</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-8a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-8b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-8c.fw
+</pre>
+</li>
+<li><b>Theorem 7.9</b>: Correctness of <code>KBools</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-9a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-9b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-9c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-9d.fw
+</pre>
+</li>
+<li><b>Theorem 7.10</b>: Correctness of <code>nf</code>.
+<pre class="example">
+$ bin/runEquivTest.sh fomega/Theorem7-10a.fw
+$ bin/runEquivTest.sh fomega/Theorem7-10b.fw
+$ bin/runEquivTest.sh fomega/Theorem7-10c.fw
+$ bin/runEquivTest.sh fomega/Theorem7-10d.fw
+</pre>
+</li>
+
+<li>Correctness of <code>CPS</code> (the operation on types that specifies the
+result type of <code>cps</code>).
+<pre class="example">
+$ bin/runEquivTest.sh fomega/CPSId.fw
+</pre>
+</li>
+
+<li>Correctness of <code>cps</code> (the operation of terms).
+<pre class="example">
+$ bin/runEquivTest.sh fomega/cpsId1.fw
+$ bin/runEquivTest.sh fomega/cpsId2.fw
+$ bin/runEquivTest.sh fomega/cpsId3.fw
+$ bin/runEquivTest.sh fomega/cpsSelfApply1.fw
+$ bin/runEquivTest.sh fomega/cpsSelfApply2.fw
+$ bin/runEquivTest.sh fomega/cpsSelfApply3.fw
+$ bin/runEquivTest.sh fomega/cpsSelfApply4.fw
+$ bin/runEquivTest.sh fomega/cpsSelfApply5.fw
+</pre>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3-4" class="outline-4">
+<h4 id="sec-3-3-4"><span class="section-number-4">3.3.4</span> Section 8</h4>
+<div class="outline-text-4" id="text-3-3-4">
+<p>
+In Section 8, we state that each of our operations is self-applicable,
+meaning that it can be applied to a representation of itself. The
+following tests demonstrate this.
+</p>
+
+<pre class="example">
+$ bin/runEquivTest.sh fomega/selfApply_unquote.fw
+$ bin/runEquivTest.sh fomega/selfApply_isAbs.fw
+$ bin/runTypecheckTest.sh fomega/selfApply_size.fw
+$ bin/runEquivTest.sh fomega/selfApply_nf.fw
+$ bin/runTypecheckTest.sh fomega/selfApply_cps.fw
+</pre>
+
+<p>
+Note that we only test that the self-applications of <code>size</code> and <code>cps</code>
+type-check, since it is not practical to express the expected result
+for an equivalence test.
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2015-09-26 Sat&gt;</span></span></p>
+<p class="author">Author: Matt Brown</p>
+<p class="date">Created: 2015-10-11 Sun 12:49</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

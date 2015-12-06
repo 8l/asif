@@ -1,0 +1,16 @@
+%decl Id : * -> * = \A:*. A
+;
+
+%decl polyTApp : (Pi A: (* -> *) -> *.
+                  A Id ->
+                  Pi B:*.
+                  (Pi R:(* -> *). A R -> R B) ->
+                  B) =
+  \A:(* -> *) -> *.
+  \x:A Id.
+  \B:*.
+  \inst:(Pi R:(* -> *). A R -> R B).
+  inst Id x
+;
+                  
+polyTApp

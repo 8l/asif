@@ -1,0 +1,17 @@
+%load "CPS";
+
+%decl Id : U = [Pi A:*. A -> A];
+%decl id : Exp Id = [\A:*. \x:A. x];
+
+-- STEP 3: inline cpsAbs
+
+%decl expected : CPS Id =
+  \V1 : *.
+  \k1 : CPS1 [Pi A:*. A -> A] -> V1.
+  k1 (\A  : *.
+      \V2 : *.
+      \k2 : (CPS [A] -> CPS [A]) -> V2.
+      k2 (\x: CPS [A]. x));
+
+\f : CPS Id -> CPS Id -> CPS Id.
+f (cps Id id) expected

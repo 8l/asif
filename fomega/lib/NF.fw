@@ -1,0 +1,25 @@
+%load "Repr";
+%load "Prelude";
+
+%decl KBools : KF   = \A:*. Bools;
+
+%decl nfAbs : Abs KBools =
+  \A:*. \B:*. \f:Bools -> Bools. 
+  bools (fst (f (bools true true))) false;
+
+%decl nfApp : App KBools =
+  \A:*. \B:*. \f:Bools. \x:Bools.
+  bools (and (snd f) (fst x)) (and (snd f) (fst x));
+
+%decl nfTAbs : TAbs KBools =
+  \A:*. \s:Strip KBools A. \f:A.
+  bools (fst (s Bools (\A:*.\x:Bools.x) f)) false;
+
+%decl nfTApp : TApp KBools =
+  \A:*. \f:Bools. \B:*. \inst:(A -> Bools).
+  bools (snd f) (snd f);
+
+%decl nf : (Pi A:U. Exp A -> Bool) =
+  \A:U. \e:Exp A.
+  fst (e KBools 
+         nfAbs nfApp nfTAbs nfTApp);

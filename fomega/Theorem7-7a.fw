@@ -1,0 +1,7 @@
+%load "Repr";
+%load "Size";
+
+\B:* -> * -> *.
+B Nat
+  (Op KNat [Pi A:*. A -> A])
+  

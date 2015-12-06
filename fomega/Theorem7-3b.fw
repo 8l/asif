@@ -1,0 +1,6 @@
+%load "Repr";
+
+\B:* -> * -> *.
+B (Pi F:* -> *. F (Pi A:*. A -> A))
+  (Op Id [Pi F:* -> *. F (Pi A:*. A -> A)])
+  

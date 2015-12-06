@@ -1,0 +1,7 @@
+%load "Repr";
+%load "IsAbs";
+
+\b : (Pi a:*. a -> a -> a).
+b (Pi A:U. Exp A -> Bool)
+  isAbs
+  (unquote [Pi A:U. Exp A -> Bool] [isAbs])

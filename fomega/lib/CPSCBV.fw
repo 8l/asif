@@ -1,0 +1,34 @@
+%load "Repr";
+
+%decl Ct : * -> * =
+  \A:*. Pi B:*. (A -> B) -> B
+;
+
+%decl CPS1 : U -> * = \u:U. u Ct;
+%decl CPS  : U -> * = \u:U. Ct (u Ct);
+
+%decl cpsAbs : Abs Ct =
+  \A:*. \B:*. \f:(Ct A -> Ct B). 
+  \V:*. \k : (Ct A -> Ct B) -> V.
+  k (\x:Ct A. x (Ct B) (\a:A. f (\V:*. \g:A -> V. g a)));
+
+%decl cpsApp : App Ct =
+  \A:*. \B:*. \f:Ct (Ct A -> Ct B). \x:Ct A. 
+  \V:*. \k:B -> V.
+  f V (\ g: Ct A -> Ct B. g x V k);
+
+%decl cpsTAbs : TAbs Ct =
+  \A:*. \strip:Strip Ct A. \f: A.
+  \V: *. \k: A -> V.
+  k f;
+
+%decl cpsTApp : TApp Ct =
+  \A:*. \f: Ct A. \B:*. \g:A -> Ct B.
+  \V:*. \k:B -> V.
+  f V (\e : A. g e V k);
+
+%decl cps : (Pi A:U. Exp A -> CPS A) =
+  \A:U. \e:Exp A.
+  e Ct
+    cpsAbs cpsApp cpsTAbs cpsTApp
+;

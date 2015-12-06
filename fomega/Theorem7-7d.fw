@@ -1,0 +1,8 @@
+%load "Repr";
+%load "Size";
+%load "CPS";
+
+\B:* -> * -> *.
+B Nat
+  (Op KNat [Pi A:U. Exp A -> CPS A])
+  

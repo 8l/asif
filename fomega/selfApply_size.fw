@@ -1,0 +1,5 @@
+%load "Repr";
+%load "Size";
+
+%decl n : Nat = size [Pi A:U. Exp A -> Nat] [size];
+n

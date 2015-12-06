@@ -1,0 +1,6 @@
+%load "Repr";
+
+%decl t : * = Pi A:U. Exp A -> unU A;
+
+\f : t -> t -> t.
+f unquote (unquote [Pi A:U. Exp A -> unU A] [unquote])

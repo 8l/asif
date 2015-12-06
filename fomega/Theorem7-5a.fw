@@ -1,0 +1,7 @@
+%load "Repr";
+%load "IsAbs";
+
+\B:* -> * -> *.
+B Bool
+  (Op KBool [Pi A:*. A -> A])
+  

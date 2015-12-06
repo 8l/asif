@@ -1,0 +1,39 @@
+%load "Repr";
+
+%decl Ct : * -> * =
+  \A:*. Pi B:*. (A -> B) -> B
+;
+
+%decl CPS  : U -> * = Op Ct;
+
+-- Note: CPS1 replaces all ocurrences of F
+-- with Ct, but does not add the outermost
+-- application of Ct.
+--    CPS [T] = Ct (CPS1 [T])
+-- This helps us show intermediate steps of cps
+-- in the tests.
+%decl CPS1 : U -> * = \A:U. A Ct;
+
+%decl cpsAbs : Abs Ct =
+  \A:*. \B:*. \f:(Ct A -> Ct B). 
+  \V:*. \k : (Ct A -> Ct B) -> V.
+  k f;
+
+%decl cpsApp : App Ct =
+  \A:*. \B:*. \f:Ct (Ct A -> Ct B). \x:Ct A. 
+  \V:*. \k:B -> V.
+  f V (\ g: Ct A -> Ct B. g x V k);
+
+%decl cpsTAbs : TAbs Ct =
+  \A:*. \strip:Strip Ct A. \f: A.
+  \V: *. \k: A -> V.
+  k f;
+
+%decl cpsTApp : TApp Ct =
+  \A:*. \f: Ct A. \B:*. \g:A -> Ct B.
+  \V:*. \k:B -> V.
+  f V (\e : A. g e V k);
+
+%decl cps : (Pi A:U. Exp A -> CPS A) =
+  foldExp Ct cpsAbs cpsApp cpsTAbs cpsTApp
+;

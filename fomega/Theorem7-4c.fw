@@ -1,0 +1,8 @@
+%load "Prelude";
+%load "Repr";
+
+\b : Nat -> Nat -> Nat.
+b (succ (succ (zero)))
+  (unquote [Nat] [succ (succ zero)])
+
+  

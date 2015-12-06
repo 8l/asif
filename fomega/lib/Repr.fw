@@ -1,0 +1,70 @@
+%decl KF : # = * -> *;
+
+%decl U : # = KF -> *;
+
+%decl Op : KF -> U -> * = \k : KF. \A:U. k (A k);
+
+-- Term representation
+%decl Id : * -> * =
+  \A:*. A
+;
+
+%decl Abs : KF -> * =
+  \F : KF. Pi A:*. Pi B:*. (F A -> F B) -> F (F A -> F B);
+
+%decl App : KF -> * =
+  \F : KF. Pi A:*. Pi B:*. F (F A -> F B) ->  F A -> F B;
+
+%decl TAbs : KF -> * =
+  \F : KF.
+  Pi A: *. 
+  (Pi T:*. (Pi B:*. F B -> T) -> A -> T) ->
+  A ->
+  F A;
+
+%decl TApp : KF -> * =
+  \F : KF. 
+  Pi A:*.
+  F A ->            -- The type-polymorphic term 
+  (Pi B:*.          -- The result type of the type application 
+   (A -> F B) ->    -- A term that performs the type application 
+   F B)
+;
+
+%decl PExp : KF -> U -> * =
+  \F : KF. \A : U.
+  Abs F -> App F ->
+  TAbs F -> TApp F ->
+  F (A F)
+;
+
+%decl Exp : U -> * = \A : U. Pi F : KF. PExp F A;
+
+%decl unU : U -> * = \u:U. u Id;
+
+%decl Strip : (* -> *) -> * -> * =
+  \F: * -> *. \ T : *.
+  Pi A : *.
+  (Pi B:*. F B -> A) ->
+  T -> A
+;
+
+%decl foldExp : (Pi F:KF. 
+                 Abs F  -> App F ->
+                 TAbs F -> TApp F ->
+                 Pi A:U. Exp A -> F (A F)) =
+  \F:KF.
+  \abs:Abs F.   \app:App F.
+  \tabs:TAbs F. \tapp:TApp F.
+  \A:U. \e:Exp A. 
+  e F abs app tabs tapp
+;
+
+%decl unquote : Pi A:U. Exp A -> unU A =
+  foldExp Id
+    (\A:*. \B:*. \f : A -> B. f)
+    (\A:*. \B:*. \f : A -> B. f)
+    (\A:*. \s:Strip Id A. \f:A. f)
+    (\A:*. \f:A. \B:*. \g:A -> B. g f)
+;
+
